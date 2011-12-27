@@ -1,0 +1,14 @@
+This is a skeleton Android application that just installs a few, large
+files needed by AndroidShogi. It is split from AndroidShogi itself
+because
+
+(1) these files are really large (43MB compressed)
+(2) their contents rarely change
+
+The android shogi program is available at the Android market:
+
+  https://market.android.com/details?id=com.ysaito.shogi
+
+Its source code is available at:
+
+  https://github.com/yasushi-saito/AndroidShogi
