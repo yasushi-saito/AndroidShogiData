@@ -15,13 +15,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * @author saito@google.com (Your Name Here)
- *
- * Helper class for downloading large data files (fv.bin etc) from the network.
- * 
- * Downloading runs in a separate thread. The thread will communicate its status
- * through the EventListener.
- */
+* @author saito@google.com (Your Name Here)
+*
+* Helper class for downloading large data files (fv.bin etc) from the network.
+* 
+* Downloading runs in a separate thread. The thread will communicate its status
+* through the EventListener.
+*/
 public class ZipExtractor {
   public interface EventListener {
     /**
@@ -36,13 +36,13 @@ public class ZipExtractor {
      */
     public void onFinish(String error);  
   }
-
+ 
   /**
    * @param listener Used to report download status to the caller
    * @param externalDir The directory to store the downloaded file.
    * The basename of the file will be the same as the one in the sourceUrl.
    */
-  public ZipExtractor(EventListener listener,	File externalDir) {
+  public ZipExtractor(EventListener listener, File externalDir) {
     mListener = listener;
     mExternalDir = externalDir;
     mThread = new ExtractThread();
@@ -50,7 +50,7 @@ public class ZipExtractor {
 
   /**
    * Must be called once to start downloading
-   * @param sourceUrl The location of the file.
+   * @param zip_in The stream that yields ZIP file contents.
    */
   public void start(InputStream zip_in) {
     mThread.execute(zip_in);
@@ -85,7 +85,6 @@ public class ZipExtractor {
       }
     }
   }
-
 
   private class ExtractThread extends AsyncTask<InputStream, String, String> {
     @Override protected String doInBackground(InputStream... stream) {
