@@ -42,18 +42,25 @@ public class ZipExtractor {
    * @param externalDir The directory to store the downloaded file.
    * The basename of the file will be the same as the one in the sourceUrl.
    */
-  public ZipExtractor(EventListener listener, File externalDir) {
-    mListener = listener;
-    mExternalDir = externalDir;
-    mThread = new ExtractThread();
+  public ZipExtractor(File externalDir) {
+	  mExternalDir = externalDir;
+	  mThread = new ExtractThread();
   }
 
+  public void resume(EventListener listener) {
+	  mListener = listener;
+	  if (mDone) {
+		  mListener.onFinish(mFinalStatus);
+	  }
+  }
+  
   /**
    * Must be called once to start downloading
    * @param zip_in The stream that yields ZIP file contents.
    */
-  public void start(InputStream zip_in) {
-    mThread.execute(zip_in);
+  public void start(EventListener listener, InputStream zip_in) {
+	  mListener = listener;
+	  mThread.execute(zip_in);
   }
 
   /**
@@ -71,8 +78,10 @@ public class ZipExtractor {
   private EventListener mListener;
   private File mExternalDir;
   private ExtractThread mThread;
-  private String mError;
-
+  
+  private boolean mDone = false;
+  private String mFinalStatus = null;
+  
   private static void deleteFilesInDir(File dir) {
     String[] children = dir.list();
     if (children != null) {
@@ -119,7 +128,9 @@ public class ZipExtractor {
     }
 
     @Override public void onPostExecute(String status) {
-      mListener.onFinish(status);
+    	mDone = true;
+    	mFinalStatus = status;
+    	mListener.onFinish(status);
     }
 
     private final byte[] mBuf = new byte[256 << 10];
@@ -148,9 +159,9 @@ public class ZipExtractor {
   private static final String[] REQUIRED_FILES = {
     "book.bin", "fv.bin", "hash.bin"
   };
-  public boolean hasRequiredFiles() {
+  public static boolean hasRequiredFiles(File externalDir) {
     for (String basename: REQUIRED_FILES) {
-      File file = new File(mExternalDir, basename);
+      File file = new File(externalDir, basename);
       if (!file.exists()) {
         Log.d(TAG, file.getAbsolutePath() + " not found");
         return false;

@@ -1,0 +1,4 @@
+bin/classes
+bin/AndroidManifest.xml
+gen
+*.swp
